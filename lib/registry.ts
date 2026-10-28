@@ -40,6 +40,7 @@ const seeds: Array<[id: string, name: string, rows: Seed[]]> = [
       ["01.5", "ripple", "Ripple", "Touch feedback from the pointer origin"],
       ["01.6", "icon-morph", "Icon Morph", "Play/pause, menu/close as one mechanism"],
       ["01.7", "press-depth", "Press Depth", "The feeling that the press landed"],
+      ["01.8", "slide-to-confirm", "Slide to Confirm", "A drag that has to travel before it commits"],
     ],
   ],
   [

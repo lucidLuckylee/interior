@@ -412,6 +412,96 @@ export function FilePicker({ onOpen }: { onOpen: (id: string) => void }) {
       "Under prefers-reduced-motion branches open and close in place; the information arrives, the travel is skipped.",
     ],
   },
+  "slide-to-confirm": {
+    export: "SlideToConfirm",
+    usage: `import { motion } from "motion/react";
+import { SlideToConfirm, useSlideToConfirm } from "@/components/interior/slide-to-confirm";
+
+export function SendFooter({ valid, send }: { valid: boolean; send: () => void }) {
+  return (
+    <SlideToConfirm
+      label="Slide to send"
+      confirmedLabel="Sent"
+      onConfirm={() => {
+        if (!valid) return false;
+        send();
+      }}
+    />
+  );
+}
+
+export function Unlock({ unlock }: { unlock: () => void }) {
+  const { trackRef, knobProps, fill, confirmed } = useSlideToConfirm({
+    onConfirm: unlock,
+    label: "Slide to unlock",
+    threshold: 0.9,
+    resetAfter: 2000,
+  });
+
+  return (
+    <div ref={trackRef} className="relative h-12 overflow-hidden rounded-xl bg-neutral-200 p-1">
+      <motion.div style={{ x: fill }} className="absolute inset-0 bg-neutral-900" />
+      <motion.button {...knobProps} className="relative h-full rounded-lg bg-white">
+        {confirmed ? "✓" : "→"}
+      </motion.button>
+    </div>
+  );
+}`,
+    props: [
+      {
+        name: "onConfirm",
+        type: "() => void | boolean",
+        note: "Fires once when the knob is released past the threshold, or when Enter or Space is pressed on it. Returning false refuses: the knob springs back and nothing commits. Any other return, including undefined, confirms.",
+      },
+      {
+        name: "label",
+        type: "string",
+        default: '"Slide to confirm"',
+        note: "Shown in the middle of the track and used as the knob's aria-label.",
+      },
+      {
+        name: "confirmedLabel",
+        type: "string",
+        default: '"Confirmed"',
+        note: "Replaces the label, in the inverted colour on the filled track, once confirmed. Also announced through a status region.",
+      },
+      {
+        name: "threshold",
+        type: "number",
+        default: "0.82",
+        note: "Fraction of the travel the knob must pass on release to confirm.",
+      },
+      {
+        name: "resetAfter",
+        type: "number",
+        default: "0",
+        note: "Milliseconds after confirming before the control returns to idle. 0 leaves it confirmed.",
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        default: "false",
+        note: "Stops dragging and key confirmation, sets aria-disabled and dims the track.",
+      },
+      {
+        name: "className",
+        type: "string",
+        default: '""',
+        note: "Appended last to the track, so a caller's width, surface and radius win.",
+      },
+    ],
+    notes: [
+      "The fill is as wide as the track and slides with a transform, so its right edge follows the knob. Animating width would lay out on every pointer move; a transform is composited and the drag never touches layout.",
+      "Position, fill and label opacity are all derived from one motion value, so dragging never re-renders React. State changes only when the gesture commits.",
+      "Refusal is an explicit false from onConfirm. The caller gets to veto after the finger has committed, which is where validation belongs, and () => {} still confirms.",
+      "Releasing short of the threshold springs back from wherever the knob is, and grabbing the knob mid-flight picks it up where it is instead of restarting.",
+      "The knob is a real button. Enter and Space confirm exactly as a full drag would, including the refusal path, and the knob travels to the end so the keyboard sees the same motion. Repeat keydowns are ignored so a held key cannot call onConfirm twice.",
+      "Max travel is measured with a ResizeObserver on the track, so the knob stays in step when the container is resized. Once confirmed, a resize keeps the knob parked at the new end.",
+      "The label is fully gone by 60% of the travel so the knob never drags over text, and the confirmed label sits on the inverted fill, readable from the first frame it is shown.",
+      "Under prefers-reduced-motion the knob jumps instead of springing and the label and icon cross-fade instantly; the information arrives, the trip is skipped.",
+      "Focus is drawn on the track, not the knob: the knob is clipped by the track and moves, so the border takes the accent and gains the glow while the knob has focus.",
+    ],
+  },
 };
 
 export const meta: Record<string, ComponentMeta> = {

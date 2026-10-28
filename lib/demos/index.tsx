@@ -37,6 +37,7 @@ import { ScrollSpyDemo } from "./scroll-spy-demo";
 import { SegmentedControlDemo } from "./segmented-control-demo";
 import { ShowMoreDemo } from "./show-more-demo";
 import { SkeletonSwapDemo } from "./skeleton-swap-demo";
+import { SlideToConfirmDemo } from "./slide-to-confirm-demo";
 import { SliderDetentsDemo } from "./slider-detents-demo";
 import { SnapCarouselDemo } from "./snap-carousel-demo";
 import { SortableTableDemo } from "./sortable-table-demo";
@@ -101,6 +102,7 @@ export const demos: Record<string, ComponentType> = {
   "segmented-control": SegmentedControlDemo,
   "show-more": ShowMoreDemo,
   "skeleton-swap": SkeletonSwapDemo,
+  "slide-to-confirm": SlideToConfirmDemo,
   "slider-detents": SliderDetentsDemo,
   "snap-carousel": SnapCarouselDemo,
   "sortable-table": SortableTableDemo,
