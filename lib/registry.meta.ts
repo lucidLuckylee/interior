@@ -451,7 +451,7 @@ export function Unlock({ unlock }: { unlock: () => void }) {
       {
         name: "onConfirm",
         type: "() => void | boolean",
-        note: "Fires once when the knob is released past the threshold, or when Enter or Space is pressed on it. Returning false refuses: the knob springs back and nothing commits. Any other return, including undefined, confirms.",
+        note: "Fires once when the knob is released past the threshold, or when Enter or Space is held on it until the knob reaches the end (600 ms; letting go early springs it back, as a drag does). Returning false refuses: the knob springs back and nothing commits. Any other return, including undefined, confirms.",
       },
       {
         name: "label",

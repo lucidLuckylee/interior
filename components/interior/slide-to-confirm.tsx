@@ -27,6 +27,7 @@ const INSTANT = { duration: 0 } as const;
 
 const KNOB = 44;
 const INSET = 8;
+const KEY_HOLD = 600;
 const THRESHOLD = 0.82;
 const FADE_BY = 0.6;
 
@@ -55,6 +56,7 @@ export function useSlideToConfirm({
   const [max, setMax] = useState(0);
   const [confirmed, setConfirmed] = useState(false);
   const locked = useRef(false);
+  const held = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const confirm = useRef(onConfirm);
   confirm.current = onConfirm;
@@ -122,7 +124,24 @@ export function useSlideToConfirm({
     onKeyDown: (e: React.KeyboardEvent) => {
       if (e.key !== "Enter" && e.key !== " ") return;
       e.preventDefault();
-      if (!e.repeat) finish();
+      if (e.repeat || held.current || locked.current || disabled) return;
+      animate(x, max, reduced ? INSTANT : { duration: KEY_HOLD / 1000, ease: "linear" });
+      held.current = setTimeout(() => {
+        held.current = null;
+        finish();
+      }, KEY_HOLD);
+    },
+    onKeyUp: (e: React.KeyboardEvent) => {
+      if ((e.key !== "Enter" && e.key !== " ") || !held.current) return;
+      clearTimeout(held.current);
+      held.current = null;
+      settle(0);
+    },
+    onBlur: () => {
+      if (!held.current) return;
+      clearTimeout(held.current);
+      held.current = null;
+      settle(0);
     },
     style: { x, width: KNOB, touchAction: "none" as const },
   };
@@ -267,7 +286,7 @@ export function SlideToConfirm({
       </motion.button>
 
       <span id={hintId} className="sr-only">
-        Slide right to confirm, or press Enter or Space. Releasing early
+        Slide right to confirm, or hold Enter or Space. Releasing early
         cancels and nothing happens.
       </span>
 
