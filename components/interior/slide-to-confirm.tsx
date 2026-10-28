@@ -87,7 +87,11 @@ export function useSlideToConfirm({
   }, [travel, x]);
 
   const finish = () => {
-    if (locked.current || disabled) return;
+    if (locked.current) return;
+    if (disabled) {
+      settle(0);
+      return;
+    }
     if (confirm.current() === false) {
       settle(0);
       return;
@@ -103,6 +107,8 @@ export function useSlideToConfirm({
     settle(0);
   }, [settle]);
 
+  useEffect(() => () => clearTimeout(held.current ?? undefined), []);
+
   useEffect(() => {
     if (!confirmed || resetAfter <= 0) return;
     const back = setTimeout(reset, resetAfter);
@@ -117,6 +123,11 @@ export function useSlideToConfirm({
     dragConstraints: { left: 0, right: max },
     dragElastic: 0,
     dragMomentum: false,
+    onDragStart: () => {
+      if (!held.current) return;
+      clearTimeout(held.current);
+      held.current = null;
+    },
     onDragEnd: () => {
       if (max > 0 && x.get() >= max * threshold) finish();
       else settle(0);
